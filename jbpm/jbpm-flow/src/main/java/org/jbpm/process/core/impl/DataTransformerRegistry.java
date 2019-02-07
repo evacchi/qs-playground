@@ -73,8 +73,6 @@ public class DataTransformerRegistry {
 	private static final Logger logger = LoggerFactory.getLogger(DataTransformerRegistry.class);
     private static final DataTransformerRegistry INSTANCE =
         // do not create ScriptEngineManager on SVM for now
-        System.getProperty("org.graalvm.nativeimage.imagecode") == null?
-            new DataTransformerRegistry(new ScriptEngineManager().getEngineFactories()) :
             new DataTransformerRegistry(Collections.emptyList());
 
     private Map<String, DataTransformer> registry;
