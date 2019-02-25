@@ -30,8 +30,8 @@ public class BoundaryEventNodeFactory extends NodeFactory {
 
     private String attachedToUniqueId;
 
-    public BoundaryEventNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
-        super(nodeContainerFactory, nodeContainer, id);
+    public BoundaryEventNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+        super(nodeContainerFactory, nodeContainer, id, recorded);
         this.nodeContainer = nodeContainer;
     }
 

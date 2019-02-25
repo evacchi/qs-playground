@@ -25,21 +25,25 @@ import org.jbpm.workflow.core.NodeContainer;
  */
 public abstract class NodeFactory {
 
-    private Node node;
-    private NodeContainer nodeContainer;
+    protected Node node;
+    protected NodeContainer nodeContainer;
     protected RuleFlowNodeContainerFactory nodeContainerFactory;
     
-    protected NodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
+    protected StringBuilder recorded;
+    
+    protected NodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
         this.nodeContainerFactory = nodeContainerFactory;
         this.nodeContainer = nodeContainer;
         this.node = createNode();
         this.node.setId(id);
+        this.recorded = recorded;
     }
 
     protected abstract Node createNode();
 
     public RuleFlowNodeContainerFactory done() {
         nodeContainer.addNode(node);
+        recorded.append(".done()\n");
         return this.nodeContainerFactory;
     }
 

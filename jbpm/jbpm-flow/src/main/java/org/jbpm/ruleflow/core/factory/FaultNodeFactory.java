@@ -26,8 +26,8 @@ import org.jbpm.workflow.core.node.FaultNode;
  */
 public class FaultNodeFactory extends NodeFactory {
 
-    public FaultNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
-        super(nodeContainerFactory, nodeContainer, id);
+    public FaultNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+        super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
     protected Node createNode() {

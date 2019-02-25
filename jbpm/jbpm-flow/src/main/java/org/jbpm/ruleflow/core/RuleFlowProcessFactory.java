@@ -37,7 +37,11 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     private static final Logger logger = LoggerFactory.getLogger(RuleFlowProcessFactory.class);
 
     public static RuleFlowProcessFactory createProcess(String id) {
-        return new RuleFlowProcessFactory(id);
+        RuleFlowProcessFactory factory = new RuleFlowProcessFactory(id);
+        
+        factory.recorded.append("RuleFlowProcessFactory.createProcess(\"" + id + "\")\n");
+        
+        return factory;
     }
 
     protected RuleFlowProcessFactory(String id) {
@@ -52,31 +56,53 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
 
     public RuleFlowProcessFactory name(String name) {
     	getRuleFlowProcess().setName(name);
+    	recorded.append(".name(\"" + name + "\")\n");
         return this;
     }
 
     public RuleFlowProcessFactory dynamic(boolean dynamic) {
         getRuleFlowProcess().setDynamic(dynamic);
+        recorded.append(".dynamic(" + dynamic + ")\n");
         return this;
     }
 
     public RuleFlowProcessFactory version(String version) {
     	getRuleFlowProcess().setVersion(version);
+    	recorded.append(".version(\"" + version + "\")\n");
         return this;
     }
 
     public RuleFlowProcessFactory packageName(String packageName) {
     	getRuleFlowProcess().setPackageName(packageName);
+    	
+    	recorded.append(".packageName(\"" + packageName + "\")\n");
         return this;
     }
 
     public RuleFlowProcessFactory imports(String... imports) {
     	getRuleFlowProcess().setImports(new HashSet<String>(Arrays.asList(imports)));
+    	
+    	recorded.append(".imports(");
+    	
+    	for (String imp : imports) {
+    	    recorded.append("\"" + imp + "\", ");
+    	}
+    	recorded.deleteCharAt(recorded.length()).deleteCharAt(recorded.length());
+    	
+    	recorded.append(")\n");
         return this;
     }
     
     public RuleFlowProcessFactory functionImports(String... functionImports) {
     	getRuleFlowProcess().setFunctionImports(Arrays.asList(functionImports));
+    	recorded.append(".functionImports(");
+        
+        for (String imp : functionImports) {
+            recorded.append("\"" + imp + "\", ");
+        }
+        recorded.deleteCharAt(recorded.length()).deleteCharAt(recorded.length());
+        
+        recorded.append(")\n");
         return this;
     }
     
@@ -92,6 +118,8 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     		getRuleFlowProcess().setGlobals(globals);
     	}
     	globals.put(name, type);
+    	recorded.append(".global(\"" + name + "\", \"" + type + "\")\n");
+        
     	return this;
     }
 
@@ -111,10 +139,13 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     	Variable variable = new Variable();
     	variable.setName(name);
     	variable.setType(type);
-    	variable.setValue(value);
+    	if (value != null) {
+    	    variable.setValue(value);
+    	}
     	if (metaDataName != null && metaDataValue != null) {
     		variable.setMetaData(metaDataName, metaDataValue);
     	}
+    	recorded.append(".variable(\"" + name + "\", new ObjectDataType(\"" + type.getStringType() + "\"))\n");
     	getRuleFlowProcess().getVariableScope().getVariables().add(variable);
     	return this;
     }
@@ -137,7 +168,8 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     	return exceptionHandler(exception, exceptionHandler);
     }
     
-    public RuleFlowProcessFactory validate() {
+    public RuleFlowNodeContainerFactory validate() {
+        recorded.append(".validate()");
         ProcessValidationError[] errors = RuleFlowProcessValidator.getInstance().validateProcess(getRuleFlowProcess());
         for (ProcessValidationError error : errors) {
             logger.error(error.toString());
@@ -153,6 +185,7 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     }
 
     public RuleFlowProcess getProcess() {
+        recorded.append(".getProcess();");
         return getRuleFlowProcess();
     }
 }

@@ -23,6 +23,7 @@ import org.jbpm.process.core.context.exception.ExceptionScope;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
+import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.DroolsConsequenceAction;
@@ -38,9 +39,10 @@ public class CompositeNodeFactory extends RuleFlowNodeContainerFactory {
 	private long linkedIncomingNodeId = -1;
 	private long linkedOutgoingNodeId = -1;
 	
-    public CompositeNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
+    public CompositeNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
     	this.nodeContainerFactory = nodeContainerFactory;
     	this.nodeContainer = nodeContainer;
+    	this.recorded = recorded;
     	CompositeContextNode compositeNode = new CompositeContextNode();
         compositeNode.setId(id);
         setNodeContainer(compositeNode);
@@ -116,6 +118,17 @@ public class CompositeNodeFactory extends RuleFlowNodeContainerFactory {
     	}
         nodeContainer.addNode(getCompositeNode());
         return nodeContainerFactory;
+    }
+
+    @Override
+    public RuleFlowNodeContainerFactory validate() {
+        return this;
+    }
+
+    @Override
+    public RuleFlowProcess getProcess() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

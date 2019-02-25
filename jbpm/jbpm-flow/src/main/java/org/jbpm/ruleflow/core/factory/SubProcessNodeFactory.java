@@ -33,8 +33,8 @@ import org.jbpm.workflow.core.node.SubProcessNode;
  */
 public class SubProcessNodeFactory extends NodeFactory {
 
-    public SubProcessNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
-        super(nodeContainerFactory, nodeContainer, id);
+    public SubProcessNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+        super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
     protected Node createNode() {

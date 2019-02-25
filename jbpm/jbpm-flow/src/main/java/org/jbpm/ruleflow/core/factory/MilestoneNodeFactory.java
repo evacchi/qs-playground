@@ -32,8 +32,8 @@ import org.jbpm.workflow.core.node.MilestoneNode;
  */
 public class MilestoneNodeFactory extends NodeFactory {
 
-    public MilestoneNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
-        super(nodeContainerFactory, nodeContainer, id);
+    public MilestoneNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+        super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
     protected Node createNode() {

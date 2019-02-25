@@ -29,8 +29,8 @@ import org.jbpm.workflow.core.node.EventNode;
  */
 public class EventNodeFactory extends NodeFactory {
 
-    public EventNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
-        super(nodeContainerFactory, nodeContainer, id);
+    public EventNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+        super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
     protected Node createNode() {

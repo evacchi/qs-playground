@@ -39,8 +39,8 @@ import org.jbpm.workflow.core.node.WorkItemNode;
  */
 public class WorkItemNodeFactory extends NodeFactory {
 
-    public WorkItemNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
-        super(nodeContainerFactory, nodeContainer, id);
+    public WorkItemNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+        super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
     protected Node createNode() {
@@ -53,21 +53,25 @@ public class WorkItemNodeFactory extends NodeFactory {
 
     public WorkItemNodeFactory name(String name) {
         getNode().setName(name);
+        recorded.append(".name(\"" + name + "\")");
         return this;
     }
     
     public WorkItemNodeFactory waitForCompletion(boolean waitForCompletion) {
     	getWorkItemNode().setWaitForCompletion(waitForCompletion);
+    	recorded.append(".waitForCompletion(" + waitForCompletion + ")");
     	return this;
     }
     
     public WorkItemNodeFactory inMapping(String parameterName, String variableName) {
     	getWorkItemNode().addInMapping(parameterName, variableName);
+    	recorded.append(".inMapping(\"" + parameterName + "\")");
     	return this;
     }
 
     public WorkItemNodeFactory outMapping(String parameterName, String variableName) {
     	getWorkItemNode().addOutMapping(parameterName, variableName);
+    	recorded.append(".outMapping(\"" + parameterName + "\", \"" + variableName +"\")");
     	return this;
     }
     
@@ -78,6 +82,7 @@ public class WorkItemNodeFactory extends NodeFactory {
     		getWorkItemNode().setWork(work);
     	}
     	work.setName(name);
+    	recorded.append(".workName(\"" + name + "\")");
     	return this;
     }
 
@@ -100,6 +105,8 @@ public class WorkItemNodeFactory extends NodeFactory {
     	Set<ParameterDefinition> parameterDefinitions = work.getParameterDefinitions();
     	parameterDefinitions.add(new ParameterDefinitionImpl(name, dataType));
     	work.setParameterDefinitions(parameterDefinitions);
+    	
+    	recorded.append(".workParameterDefinition(\"" + name + "\", new ObjectDataType(\"" + dataType.getStringType() + "\"))\n");
     	return this;
     }
 

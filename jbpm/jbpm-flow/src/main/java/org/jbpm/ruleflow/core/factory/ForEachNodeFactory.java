@@ -18,6 +18,7 @@ package org.jbpm.ruleflow.core.factory;
 
 import org.jbpm.process.core.datatype.DataType;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
+import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.node.ForEachNode;
@@ -32,9 +33,10 @@ public class ForEachNodeFactory extends RuleFlowNodeContainerFactory {
 	private long linkedIncomingNodeId = -1;
 	private long linkedOutgoingNodeId = -1;
 
-    public ForEachNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
+    public ForEachNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
     	this.nodeContainerFactory = nodeContainerFactory;
     	this.nodeContainer = nodeContainer;
+    	this.recorded = recorded;
     	ForEachNode forEachNode = new ForEachNode();
         forEachNode.setId(id);
         setNodeContainer(forEachNode);
@@ -83,5 +85,15 @@ public class ForEachNodeFactory extends RuleFlowNodeContainerFactory {
         nodeContainer.addNode(getForEachNode());
         return nodeContainerFactory;
     }
+    
+    @Override
+    public RuleFlowNodeContainerFactory validate() {
+        return this;
+    }
 
+    @Override
+    public RuleFlowProcess getProcess() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

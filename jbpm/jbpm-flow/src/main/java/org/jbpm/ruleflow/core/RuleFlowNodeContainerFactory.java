@@ -40,6 +40,8 @@ import org.kie.api.definition.process.Node;
 public abstract class RuleFlowNodeContainerFactory {
 
     private NodeContainer nodeContainer;
+    
+    protected StringBuilder recorded = new StringBuilder();
 
     protected void setNodeContainer(NodeContainer nodeContainer) {
     	this.nodeContainer = nodeContainer;
@@ -50,74 +52,92 @@ public abstract class RuleFlowNodeContainerFactory {
     }
 
     public StartNodeFactory startNode(long id) {
-        return new StartNodeFactory(this, nodeContainer, id);
+        recorded.append(".startNode(" + id + ")\n\t");
+        return new StartNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public EndNodeFactory endNode(long id) {
-        return new EndNodeFactory(this, nodeContainer, id);
+        recorded.append(".endNode(" + id + ")\n\t");
+        return new EndNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public ActionNodeFactory actionNode(long id) {
-        return new ActionNodeFactory(this, nodeContainer, id);
+        recorded.append(".actionNode(" + id + ")\n\t");
+        return new ActionNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public MilestoneNodeFactory milestoneNode(long id) {
-        return new MilestoneNodeFactory(this, nodeContainer, id);
+        recorded.append(".milestoneNode(" + id + ")\n\t");
+        return new MilestoneNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public TimerNodeFactory timerNode(long id) {
-        return new TimerNodeFactory(this, nodeContainer, id);
+        recorded.append(".timerNode(" + id + ")\n\t");
+        return new TimerNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public HumanTaskNodeFactory humanTaskNode(long id) {
-        return new HumanTaskNodeFactory(this, nodeContainer, id);
+        recorded.append(".humanTaskNode(" + id + ")\n\t");
+        return new HumanTaskNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public SubProcessNodeFactory subProcessNode(long id) {
-        return new SubProcessNodeFactory(this, nodeContainer, id);
+        recorded.append(".subProcessNode(" + id + ")\n\t");
+        return new SubProcessNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public SplitFactory splitNode(long id) {
-        return new SplitFactory(this, nodeContainer, id);
+        recorded.append(".splitNode(" + id + ")\n\t");
+        return new SplitFactory(this, nodeContainer, id, recorded);
     }
 
     public JoinFactory joinNode(long id) {
-        return new JoinFactory(this, nodeContainer, id);
+        recorded.append(".joinNode(" + id + ")\n\t");
+        return new JoinFactory(this, nodeContainer, id, recorded);
     }
 
     public RuleSetNodeFactory ruleSetNode(long id) {
-        return new RuleSetNodeFactory(this, nodeContainer, id);
+        recorded.append(".ruleSetNode(" + id + ")\n\t");
+        return new RuleSetNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public FaultNodeFactory faultNode(long id) {
-        return new FaultNodeFactory(this, nodeContainer, id);
+        recorded.append(".faultNode(" + id + ")\n\t");
+        return new FaultNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public EventNodeFactory eventNode(long id) {
-        return new EventNodeFactory(this, nodeContainer, id);
+        recorded.append(".eventNode(" + id + ")\n\t");
+        return new EventNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public BoundaryEventNodeFactory boundaryEventNode(long id) {
-        return new BoundaryEventNodeFactory(this, nodeContainer, id);
+        recorded.append(".boundaryEventNode(" + id + ")\n\t");
+        return new BoundaryEventNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public CompositeNodeFactory compositeNode(long id) {
-        return new CompositeNodeFactory(this, nodeContainer, id);
+        recorded.append(".compositeNode(" + id + ")\n\t");
+        return new CompositeNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public ForEachNodeFactory forEachNode(long id) {
-        return new ForEachNodeFactory(this, nodeContainer, id);
+        recorded.append(".forEachNode(" + id + ")\n\t");
+        return new ForEachNodeFactory(this, nodeContainer, id, recorded);
     }
     
     public DynamicNodeFactory dynamicNode(long id) {
-        return new DynamicNodeFactory(this, nodeContainer, id);
+        recorded.append(".dynamicNode(" + id + ")\n\t");
+        return new DynamicNodeFactory(this, nodeContainer, id, recorded);
     }
     
     public WorkItemNodeFactory workItemNode(long id) {
-    	return new WorkItemNodeFactory(this, nodeContainer, id);
+        recorded.append(".workItemNode(" + id + ")\n\t");
+    	return new WorkItemNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public RuleFlowNodeContainerFactory connection(long fromId, long toId) {
+        recorded.append(".connection(" + fromId + ", " + toId + ")\n");
         Node from = nodeContainer.getNode(fromId);
         Node to = nodeContainer.getNode(toId);
         new ConnectionImpl(
@@ -127,6 +147,14 @@ public abstract class RuleFlowNodeContainerFactory {
     }
     
     public abstract RuleFlowNodeContainerFactory done();
+    
+    public abstract RuleFlowNodeContainerFactory validate();
+    
+    public abstract RuleFlowProcess getProcess();
+    
+    public String getRecordedStructure() {
+        return recorded.toString();
+    }
 
 }
 

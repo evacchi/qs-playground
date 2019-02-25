@@ -16,6 +16,8 @@
 
 package org.jbpm.ruleflow.core.factory;
 
+import org.jbpm.process.core.context.variable.Variable;
+import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.impl.Action;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.DroolsAction;
@@ -28,10 +30,13 @@ public class ActionNodeFactory extends NodeFactory {
 
     public ActionNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory,
                              NodeContainer nodeContainer,
-                             long id) {
+                             long id, 
+                             StringBuilder recorded
+                             ) {
         super(nodeContainerFactory,
               nodeContainer,
-              id);
+              id,
+              recorded);
     }
 
     protected Node createNode() {
@@ -44,6 +49,7 @@ public class ActionNodeFactory extends NodeFactory {
 
     public ActionNodeFactory name(String name) {
         getNode().setName(name);
+        recorded.append(".name(\"" + name + "\")");
         return this;
     }
 
@@ -64,6 +70,8 @@ public class ActionNodeFactory extends NodeFactory {
             getActionNode().setAction(new DroolsConsequenceAction(dialect,
                                                                   action));
         }
+        generateAction(action);
+        
         return this;
     }
 
@@ -72,6 +80,21 @@ public class ActionNodeFactory extends NodeFactory {
         droolsAction.setMetaData("Action",
                                  action);
         getActionNode().setAction(droolsAction);
+        
+        
+        generateAction(action.toString());
         return this;
+    }
+    
+    protected void generateAction(String action) {
+        VariableScope vscope = (VariableScope) ((org.jbpm.process.core.Process) nodeContainer).getDefaultContext(VariableScope.VARIABLE_SCOPE);
+        
+        recorded.append(".action((kcontext) -> {");
+        
+        for (Variable v : vscope.getVariables()) {
+            recorded.append("\n" + v.getType().getStringType() + " " + v.getName() + " = (" + v.getType().getStringType() + ") kcontext.getVariable(\"" + v.getName() + "\"); \n");
+        }
+        
+        recorded.append(action + "})");
     }
 }

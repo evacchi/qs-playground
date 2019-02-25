@@ -130,36 +130,20 @@ public class ProcessRuntimeImpl implements InternalProcessRuntime {
 	
 	private void initProcessInstanceManager() {
 		String processInstanceManagerClass = ((SessionConfiguration) kruntime.getSessionConfiguration()).getProcessInstanceManagerFactory();
-		try {
+		
 			processInstanceManager = 
-				((ProcessInstanceManagerFactory) loadClass(processInstanceManagerClass).newInstance())
+				((ProcessInstanceManagerFactory) new org.jbpm.process.instance.impl.DefaultProcessInstanceManagerFactory())
 			        .createProcessInstanceManager(kruntime);
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		
 	}
 	
 	private void initSignalManager() {
 		String signalManagerClass = ((SessionConfiguration) kruntime.getSessionConfiguration()).getSignalManagerFactory();
-		try {
-			signalManager = ((SignalManagerFactory) loadClass(signalManagerClass).newInstance())
+		
+			signalManager = ((SignalManagerFactory) new org.jbpm.process.instance.event.DefaultSignalManagerFactory())
 		        .createSignalManager(kruntime);
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
 	}
-	
-	private Class<?> loadClass(String className) {
-	    try {
-            return getRootClassLoader().loadClass(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-	}
+
 	
 	private ClassLoader getRootClassLoader() {
 		KieBase kbase = ((InternalKnowledgeBase) kruntime.getKieBase());

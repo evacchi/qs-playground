@@ -26,8 +26,8 @@ import org.jbpm.workflow.core.node.EndNode;
  */
 public class EndNodeFactory extends NodeFactory {
 
-    public EndNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
-        super(nodeContainerFactory, nodeContainer, id);
+    public EndNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+        super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
     protected Node createNode() {
@@ -39,11 +39,13 @@ public class EndNodeFactory extends NodeFactory {
     }
 
     public EndNodeFactory name(String name) {
+        recorded.append(".name(\"" + name + "\")");
         getNode().setName(name);
         return this;
     }
 
     public EndNodeFactory terminate(boolean terminate) {
+        recorded.append(".terminate(" + terminate + ")");
         getEndNode().setTerminate(terminate);
         return this;
     }

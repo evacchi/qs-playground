@@ -26,8 +26,8 @@ import org.jbpm.workflow.core.node.StartNode;
  */
 public class StartNodeFactory extends NodeFactory {
 
-    public StartNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id) {
-        super(nodeContainerFactory, nodeContainer, id);
+    public StartNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+        super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
     protected Node createNode() {
@@ -36,6 +36,7 @@ public class StartNodeFactory extends NodeFactory {
 
     public StartNodeFactory name(String name) {
         getNode().setName(name);
+        recorded.append(".name(\"" + name + "\")");
         return this;
     }
     
