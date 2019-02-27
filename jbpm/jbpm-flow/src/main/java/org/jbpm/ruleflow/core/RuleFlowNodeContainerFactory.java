@@ -16,6 +16,9 @@
 
 package org.jbpm.ruleflow.core;
 
+import org.drools.javaparser.ast.expr.IntegerLiteralExpr;
+import org.drools.javaparser.ast.expr.LongLiteralExpr;
+import org.drools.javaparser.ast.expr.MethodCallExpr;
 import org.jbpm.ruleflow.core.factory.ActionNodeFactory;
 import org.jbpm.ruleflow.core.factory.BoundaryEventNodeFactory;
 import org.jbpm.ruleflow.core.factory.CompositeNodeFactory;
@@ -41,7 +44,7 @@ public abstract class RuleFlowNodeContainerFactory {
 
     private NodeContainer nodeContainer;
     
-    protected StringBuilder recorded = new StringBuilder();
+    protected MethodChainBuilder recorded = new MethodChainBuilder();
 
     protected void setNodeContainer(NodeContainer nodeContainer) {
     	this.nodeContainer = nodeContainer;
@@ -52,92 +55,94 @@ public abstract class RuleFlowNodeContainerFactory {
     }
 
     public StartNodeFactory startNode(long id) {
-        recorded.append(".startNode(" + id + ")\n\t");
+        recorded.appendMethod("startNode", new LongLiteralExpr(id));
         return new StartNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public EndNodeFactory endNode(long id) {
-        recorded.append(".endNode(" + id + ")\n\t");
+        recorded.appendMethod("endNode", new LongLiteralExpr(id));
         return new EndNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public ActionNodeFactory actionNode(long id) {
-        recorded.append(".actionNode(" + id + ")\n\t");
+        recorded.appendMethod("actionNode", new LongLiteralExpr(id));
         return new ActionNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public MilestoneNodeFactory milestoneNode(long id) {
-        recorded.append(".milestoneNode(" + id + ")\n\t");
+        recorded.appendMethod("milestoneNode", new LongLiteralExpr(id));
         return new MilestoneNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public TimerNodeFactory timerNode(long id) {
-        recorded.append(".timerNode(" + id + ")\n\t");
+        recorded.appendMethod("timerNode", new LongLiteralExpr(id));
         return new TimerNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public HumanTaskNodeFactory humanTaskNode(long id) {
-        recorded.append(".humanTaskNode(" + id + ")\n\t");
+        recorded.appendMethod("humanTaskNode", new LongLiteralExpr(id));
         return new HumanTaskNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public SubProcessNodeFactory subProcessNode(long id) {
-        recorded.append(".subProcessNode(" + id + ")\n\t");
+        recorded.appendMethod("subProcessNode", new LongLiteralExpr(id));
         return new SubProcessNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public SplitFactory splitNode(long id) {
-        recorded.append(".splitNode(" + id + ")\n\t");
+        recorded.appendMethod("splitNode", new LongLiteralExpr(id));
         return new SplitFactory(this, nodeContainer, id, recorded);
     }
 
     public JoinFactory joinNode(long id) {
-        recorded.append(".joinNode(" + id + ")\n\t");
+        recorded.appendMethod("joinNode", new LongLiteralExpr(id));
         return new JoinFactory(this, nodeContainer, id, recorded);
     }
 
     public RuleSetNodeFactory ruleSetNode(long id) {
-        recorded.append(".ruleSetNode(" + id + ")\n\t");
+        recorded.appendMethod("ruleSetNode", new LongLiteralExpr(id));
         return new RuleSetNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public FaultNodeFactory faultNode(long id) {
-        recorded.append(".faultNode(" + id + ")\n\t");
+        recorded.appendMethod("faultNode", new LongLiteralExpr(id));
         return new FaultNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public EventNodeFactory eventNode(long id) {
-        recorded.append(".eventNode(" + id + ")\n\t");
+        recorded.appendMethod("eventNode", new LongLiteralExpr(id));
         return new EventNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public BoundaryEventNodeFactory boundaryEventNode(long id) {
-        recorded.append(".boundaryEventNode(" + id + ")\n\t");
+        recorded.appendMethod("boundaryEventNode", new LongLiteralExpr(id));
         return new BoundaryEventNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public CompositeNodeFactory compositeNode(long id) {
-        recorded.append(".compositeNode(" + id + ")\n\t");
+        recorded.appendMethod("compositeNode", new LongLiteralExpr(id));
         return new CompositeNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public ForEachNodeFactory forEachNode(long id) {
-        recorded.append(".forEachNode(" + id + ")\n\t");
+        recorded.appendMethod("forEachNode", new LongLiteralExpr(id));
         return new ForEachNodeFactory(this, nodeContainer, id, recorded);
     }
     
     public DynamicNodeFactory dynamicNode(long id) {
-        recorded.append(".dynamicNode(" + id + ")\n\t");
+        recorded.appendMethod("dynamicNode", new LongLiteralExpr(id));
         return new DynamicNodeFactory(this, nodeContainer, id, recorded);
     }
     
     public WorkItemNodeFactory workItemNode(long id) {
-        recorded.append(".workItemNode(" + id + ")\n\t");
+        recorded.appendMethod("workItemNode", new LongLiteralExpr(id));
     	return new WorkItemNodeFactory(this, nodeContainer, id, recorded);
     }
 
     public RuleFlowNodeContainerFactory connection(long fromId, long toId) {
-        recorded.append(".connection(" + fromId + ", " + toId + ")\n");
+        recorded.appendMethod("connection",
+                              new LongLiteralExpr(fromId),
+                              new LongLiteralExpr(toId));
         Node from = nodeContainer.getNode(fromId);
         Node to = nodeContainer.getNode(toId);
         new ConnectionImpl(

@@ -16,6 +16,7 @@
 
 package org.jbpm.ruleflow.core.factory;
 
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
@@ -26,7 +27,7 @@ import org.jbpm.workflow.core.node.FaultNode;
  */
 public class FaultNodeFactory extends NodeFactory {
 
-    public FaultNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+    public FaultNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, MethodChainBuilder recorded) {
         super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 

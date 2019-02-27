@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jbpm.process.core.timer.Timer;
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.DroolsAction;
 import org.jbpm.workflow.core.Node;
@@ -33,7 +34,7 @@ import org.jbpm.workflow.core.node.SubProcessNode;
  */
 public class SubProcessNodeFactory extends NodeFactory {
 
-    public SubProcessNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+    public SubProcessNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, MethodChainBuilder recorded) {
         super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 

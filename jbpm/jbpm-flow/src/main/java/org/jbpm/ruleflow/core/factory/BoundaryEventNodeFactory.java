@@ -19,6 +19,7 @@ package org.jbpm.ruleflow.core.factory;
 import org.jbpm.process.core.event.EventFilter;
 import org.jbpm.process.core.event.EventTransformer;
 import org.jbpm.process.core.event.EventTypeFilter;
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
@@ -30,7 +31,7 @@ public class BoundaryEventNodeFactory extends NodeFactory {
 
     private String attachedToUniqueId;
 
-    public BoundaryEventNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+    public BoundaryEventNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, MethodChainBuilder recorded) {
         super(nodeContainerFactory, nodeContainer, id, recorded);
         this.nodeContainer = nodeContainer;
     }

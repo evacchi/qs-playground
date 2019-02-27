@@ -21,6 +21,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.drools.javaparser.ast.Node;
+import org.drools.javaparser.ast.NodeList;
+import org.drools.javaparser.ast.expr.BooleanLiteralExpr;
+import org.drools.javaparser.ast.expr.Expression;
+import org.drools.javaparser.ast.expr.MethodCallExpr;
+import org.drools.javaparser.ast.expr.NameExpr;
+import org.drools.javaparser.ast.expr.ObjectCreationExpr;
+import org.drools.javaparser.ast.expr.StringLiteralExpr;
+import org.drools.javaparser.ast.type.ClassOrInterfaceType;
 import org.jbpm.process.core.datatype.DataType;
 import org.jbpm.process.core.context.exception.ActionExceptionHandler;
 import org.jbpm.process.core.context.exception.ExceptionHandler;
@@ -38,9 +47,12 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
 
     public static RuleFlowProcessFactory createProcess(String id) {
         RuleFlowProcessFactory factory = new RuleFlowProcessFactory(id);
-        
-        factory.recorded.append("RuleFlowProcessFactory.createProcess(\"" + id + "\")\n");
-        
+
+        factory.recorded.append(
+                new MethodCallExpr(
+                        new NameExpr("RuleFlowProcessFactory"),
+                        "createProcess").addArgument(new StringLiteralExpr(id)));
+
         return factory;
     }
 
@@ -56,53 +68,51 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
 
     public RuleFlowProcessFactory name(String name) {
     	getRuleFlowProcess().setName(name);
-    	recorded.append(".name(\"" + name + "\")\n");
+    	recorded.appendMethod("name", new StringLiteralExpr(name));
         return this;
     }
 
     public RuleFlowProcessFactory dynamic(boolean dynamic) {
         getRuleFlowProcess().setDynamic(dynamic);
-        recorded.append(".dynamic(" + dynamic + ")\n");
+        recorded.appendMethod("dynamic", new BooleanLiteralExpr(dynamic));
         return this;
     }
 
     public RuleFlowProcessFactory version(String version) {
     	getRuleFlowProcess().setVersion(version);
-    	recorded.append(".version(\"" + version + "\")\n");
+        recorded.appendMethod("version", new StringLiteralExpr(version));
         return this;
     }
 
     public RuleFlowProcessFactory packageName(String packageName) {
     	getRuleFlowProcess().setPackageName(packageName);
-    	
-    	recorded.append(".packageName(\"" + packageName + "\")\n");
+
+        recorded.appendMethod("packageName", new StringLiteralExpr(packageName));
         return this;
     }
 
     public RuleFlowProcessFactory imports(String... imports) {
     	getRuleFlowProcess().setImports(new HashSet<String>(Arrays.asList(imports)));
     	
-    	recorded.append(".imports(");
-    	
-    	for (String imp : imports) {
-    	    recorded.append("\"" + imp + "\", ");
+        NodeList<Expression> nodes = new NodeList<>();
+
+        for (String imp : imports) {
+            nodes.add(new StringLiteralExpr(imp));
     	}
-    	recorded.deleteCharAt(recorded.length()).deleteCharAt(recorded.length());
-    	
-    	recorded.append(")\n");
+
+    	recorded.append(new MethodCallExpr(null, "imports", nodes));
         return this;
     }
     
     public RuleFlowProcessFactory functionImports(String... functionImports) {
     	getRuleFlowProcess().setFunctionImports(Arrays.asList(functionImports));
-    	recorded.append(".functionImports(");
-        
+        NodeList<Expression> nodes = new NodeList<>();
+
         for (String imp : functionImports) {
-            recorded.append("\"" + imp + "\", ");
+            nodes.add(new StringLiteralExpr(imp));
         }
-        recorded.deleteCharAt(recorded.length()).deleteCharAt(recorded.length());
-        
-        recorded.append(")\n");
+
+        recorded.append(new MethodCallExpr(null, "functionImports", nodes));
         return this;
     }
     
@@ -118,7 +128,7 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     		getRuleFlowProcess().setGlobals(globals);
     	}
     	globals.put(name, type);
-    	recorded.append(".global(\"" + name + "\", \"" + type + "\")\n");
+    	recorded.appendMethod("global", new StringLiteralExpr(name), new StringLiteralExpr(type));
         
     	return this;
     }
@@ -145,7 +155,11 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     	if (metaDataName != null && metaDataValue != null) {
     		variable.setMetaData(metaDataName, metaDataValue);
     	}
-    	recorded.append(".variable(\"" + name + "\", new ObjectDataType(\"" + type.getStringType() + "\"))\n");
+    	recorded.appendMethod("variable",
+                              new StringLiteralExpr(name),
+                              new ObjectCreationExpr()
+                                      .setType(new ClassOrInterfaceType("ObjectDataType"))
+                                      .addArgument(new StringLiteralExpr(type.getStringType())));
     	getRuleFlowProcess().getVariableScope().getVariables().add(variable);
     	return this;
     }
@@ -169,7 +183,7 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     }
     
     public RuleFlowNodeContainerFactory validate() {
-        recorded.append(".validate()");
+        recorded.appendMethod("validate");
         ProcessValidationError[] errors = RuleFlowProcessValidator.getInstance().validateProcess(getRuleFlowProcess());
         for (ProcessValidationError error : errors) {
             logger.error(error.toString());
@@ -185,7 +199,7 @@ public class RuleFlowProcessFactory extends RuleFlowNodeContainerFactory {
     }
 
     public RuleFlowProcess getProcess() {
-        recorded.append(".getProcess();");
+        recorded.appendMethod("getProcess");
         return getRuleFlowProcess();
     }
 }

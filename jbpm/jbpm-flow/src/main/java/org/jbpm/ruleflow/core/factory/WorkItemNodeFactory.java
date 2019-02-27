@@ -20,12 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.drools.javaparser.ast.expr.BooleanLiteralExpr;
+import org.drools.javaparser.ast.expr.ObjectCreationExpr;
+import org.drools.javaparser.ast.expr.StringLiteralExpr;
+import org.drools.javaparser.ast.type.ClassOrInterfaceType;
 import org.jbpm.process.core.ParameterDefinition;
 import org.jbpm.process.core.Work;
 import org.jbpm.process.core.datatype.DataType;
 import org.jbpm.process.core.impl.ParameterDefinitionImpl;
 import org.jbpm.process.core.impl.WorkImpl;
 import org.jbpm.process.core.timer.Timer;
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.DroolsAction;
 import org.jbpm.workflow.core.Node;
@@ -39,7 +44,7 @@ import org.jbpm.workflow.core.node.WorkItemNode;
  */
 public class WorkItemNodeFactory extends NodeFactory {
 
-    public WorkItemNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+    public WorkItemNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, MethodChainBuilder recorded) {
         super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
@@ -53,25 +58,25 @@ public class WorkItemNodeFactory extends NodeFactory {
 
     public WorkItemNodeFactory name(String name) {
         getNode().setName(name);
-        recorded.append(".name(\"" + name + "\")");
+        recorded.appendMethod("name", new StringLiteralExpr(name));
         return this;
     }
     
     public WorkItemNodeFactory waitForCompletion(boolean waitForCompletion) {
     	getWorkItemNode().setWaitForCompletion(waitForCompletion);
-    	recorded.append(".waitForCompletion(" + waitForCompletion + ")");
+        recorded.appendMethod("waitForCompletion", new BooleanLiteralExpr(waitForCompletion));
     	return this;
     }
     
     public WorkItemNodeFactory inMapping(String parameterName, String variableName) {
     	getWorkItemNode().addInMapping(parameterName, variableName);
-    	recorded.append(".inMapping(\"" + parameterName + "\")");
+        recorded.appendMethod("inMapping", new StringLiteralExpr(variableName));
     	return this;
     }
 
     public WorkItemNodeFactory outMapping(String parameterName, String variableName) {
     	getWorkItemNode().addOutMapping(parameterName, variableName);
-    	recorded.append(".outMapping(\"" + parameterName + "\", \"" + variableName +"\")");
+        recorded.appendMethod("outMapping", new StringLiteralExpr(variableName));
     	return this;
     }
     
@@ -82,7 +87,7 @@ public class WorkItemNodeFactory extends NodeFactory {
     		getWorkItemNode().setWork(work);
     	}
     	work.setName(name);
-    	recorded.append(".workName(\"" + name + "\")");
+        recorded.appendMethod("workName", new StringLiteralExpr(name));
     	return this;
     }
 
@@ -105,9 +110,14 @@ public class WorkItemNodeFactory extends NodeFactory {
     	Set<ParameterDefinition> parameterDefinitions = work.getParameterDefinitions();
     	parameterDefinitions.add(new ParameterDefinitionImpl(name, dataType));
     	work.setParameterDefinitions(parameterDefinitions);
-    	
-    	recorded.append(".workParameterDefinition(\"" + name + "\", new ObjectDataType(\"" + dataType.getStringType() + "\"))\n");
-    	return this;
+
+        recorded.appendMethod("workParameterDefinition",
+                              new StringLiteralExpr("name"),
+                              new ObjectCreationExpr()
+                                      .setType(new ClassOrInterfaceType("ObjectDataType"))
+                                      .addArgument(new StringLiteralExpr(dataType.getStringType())));
+
+        return this;
     }
 
     public WorkItemNodeFactory onEntryAction(String dialect, String action) {

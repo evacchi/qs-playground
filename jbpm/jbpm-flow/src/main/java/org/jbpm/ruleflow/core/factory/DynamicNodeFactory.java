@@ -22,6 +22,7 @@ import org.jbpm.process.core.context.exception.ExceptionHandler;
 import org.jbpm.process.core.context.exception.ExceptionScope;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.Node;
@@ -40,7 +41,7 @@ public class DynamicNodeFactory extends RuleFlowNodeContainerFactory {
 	private long linkedIncomingNodeId = -1;
 	private long linkedOutgoingNodeId = -1;
 	
-    public DynamicNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+    public DynamicNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, MethodChainBuilder recorded) {
     	this.nodeContainerFactory = nodeContainerFactory;
     	this.nodeContainer = nodeContainer;
     	this.recorded = recorded;

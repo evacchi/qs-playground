@@ -31,14 +31,18 @@
     </dependency>
     <dependency>
       <groupId>org.drools</groupId>
+      <artifactId>drlx-parser</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.drools</groupId>
       <artifactId>drools-core</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-api</artifactId>
     </dependency>
-
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
@@ -47,12 +51,12 @@
       <groupId>org.mvel</groupId>
       <artifactId>mvel2</artifactId>
     </dependency>
+
+    <!--  test -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    
-    <!--  test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -16,6 +16,8 @@
 
 package org.jbpm.ruleflow.core.factory;
 
+import org.drools.javaparser.ast.expr.StringLiteralExpr;
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
@@ -26,7 +28,7 @@ import org.jbpm.workflow.core.node.StartNode;
  */
 public class StartNodeFactory extends NodeFactory {
 
-    public StartNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+    public StartNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, MethodChainBuilder recorded) {
         super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
@@ -36,7 +38,7 @@ public class StartNodeFactory extends NodeFactory {
 
     public StartNodeFactory name(String name) {
         getNode().setName(name);
-        recorded.append(".name(\"" + name + "\")");
+        recorded.appendMethod("name", new StringLiteralExpr(name));
         return this;
     }
     

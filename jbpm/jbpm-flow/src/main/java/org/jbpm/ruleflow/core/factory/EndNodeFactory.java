@@ -16,6 +16,9 @@
 
 package org.jbpm.ruleflow.core.factory;
 
+import org.drools.javaparser.ast.expr.BooleanLiteralExpr;
+import org.drools.javaparser.ast.expr.StringLiteralExpr;
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
@@ -26,7 +29,7 @@ import org.jbpm.workflow.core.node.EndNode;
  */
 public class EndNodeFactory extends NodeFactory {
 
-    public EndNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+    public EndNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, MethodChainBuilder recorded) {
         super(nodeContainerFactory, nodeContainer, id, recorded);
     }
 
@@ -39,13 +42,13 @@ public class EndNodeFactory extends NodeFactory {
     }
 
     public EndNodeFactory name(String name) {
-        recorded.append(".name(\"" + name + "\")");
+        recorded.appendMethod("name", new StringLiteralExpr(name));
         getNode().setName(name);
         return this;
     }
 
     public EndNodeFactory terminate(boolean terminate) {
-        recorded.append(".terminate(" + terminate + ")");
+        recorded.appendMethod("terminate", new BooleanLiteralExpr(terminate));
         getEndNode().setTerminate(terminate);
         return this;
     }

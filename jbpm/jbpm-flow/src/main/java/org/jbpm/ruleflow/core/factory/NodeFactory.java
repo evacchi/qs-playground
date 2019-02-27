@@ -16,6 +16,7 @@
 
 package org.jbpm.ruleflow.core.factory;
 
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
@@ -29,9 +30,9 @@ public abstract class NodeFactory {
     protected NodeContainer nodeContainer;
     protected RuleFlowNodeContainerFactory nodeContainerFactory;
     
-    protected StringBuilder recorded;
+    protected MethodChainBuilder recorded;
     
-    protected NodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, StringBuilder recorded) {
+    protected NodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory, NodeContainer nodeContainer, long id, MethodChainBuilder recorded) {
         this.nodeContainerFactory = nodeContainerFactory;
         this.nodeContainer = nodeContainer;
         this.node = createNode();
@@ -43,7 +44,7 @@ public abstract class NodeFactory {
 
     public RuleFlowNodeContainerFactory done() {
         nodeContainer.addNode(node);
-        recorded.append(".done()\n");
+        recorded.appendMethod("done");
         return this.nodeContainerFactory;
     }
 

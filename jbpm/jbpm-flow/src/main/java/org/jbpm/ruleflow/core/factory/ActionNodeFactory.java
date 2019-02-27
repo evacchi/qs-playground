@@ -16,9 +16,23 @@
 
 package org.jbpm.ruleflow.core.factory;
 
+import org.drools.javaparser.ast.body.Parameter;
+import org.drools.javaparser.ast.expr.AssignExpr;
+import org.drools.javaparser.ast.expr.CastExpr;
+import org.drools.javaparser.ast.expr.LambdaExpr;
+import org.drools.javaparser.ast.expr.MethodCallExpr;
+import org.drools.javaparser.ast.expr.NameExpr;
+import org.drools.javaparser.ast.expr.StringLiteralExpr;
+import org.drools.javaparser.ast.expr.VariableDeclarationExpr;
+import org.drools.javaparser.ast.stmt.BlockStmt;
+import org.drools.javaparser.ast.stmt.ExpressionStmt;
+import org.drools.javaparser.ast.stmt.Statement;
+import org.drools.javaparser.ast.type.ClassOrInterfaceType;
+import org.drools.javaparser.ast.type.UnknownType;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.impl.Action;
+import org.jbpm.ruleflow.core.MethodChainBuilder;
 import org.jbpm.ruleflow.core.RuleFlowNodeContainerFactory;
 import org.jbpm.workflow.core.DroolsAction;
 import org.jbpm.workflow.core.Node;
@@ -30,9 +44,9 @@ public class ActionNodeFactory extends NodeFactory {
 
     public ActionNodeFactory(RuleFlowNodeContainerFactory nodeContainerFactory,
                              NodeContainer nodeContainer,
-                             long id, 
-                             StringBuilder recorded
-                             ) {
+                             long id,
+                             MethodChainBuilder recorded
+    ) {
         super(nodeContainerFactory,
               nodeContainer,
               id,
@@ -49,7 +63,7 @@ public class ActionNodeFactory extends NodeFactory {
 
     public ActionNodeFactory name(String name) {
         getNode().setName(name);
-        recorded.append(".name(\"" + name + "\")");
+        recorded.appendMethod("name", new StringLiteralExpr(name));
         return this;
     }
 
@@ -61,7 +75,7 @@ public class ActionNodeFactory extends NodeFactory {
     public ActionNodeFactory action(String dialect,
                                     String action,
                                     boolean isDroolsAction) {
-        if(isDroolsAction) {
+        if (isDroolsAction) {
             DroolsAction droolsAction = new DroolsAction();
             droolsAction.setMetaData("Action",
                                      action);
@@ -71,7 +85,7 @@ public class ActionNodeFactory extends NodeFactory {
                                                                   action));
         }
         generateAction(action);
-        
+
         return this;
     }
 
@@ -80,21 +94,43 @@ public class ActionNodeFactory extends NodeFactory {
         droolsAction.setMetaData("Action",
                                  action);
         getActionNode().setAction(droolsAction);
-        
-        
+
         generateAction(action.toString());
         return this;
     }
-    
+
     protected void generateAction(String action) {
         VariableScope vscope = (VariableScope) ((org.jbpm.process.core.Process) nodeContainer).getDefaultContext(VariableScope.VARIABLE_SCOPE);
-        
-        recorded.append(".action((kcontext) -> {");
-        
+
+        BlockStmt body = new BlockStmt();
+        LambdaExpr lambda = new LambdaExpr(
+                new Parameter(new UnknownType(), "kcontext"), // (kcontext) ->
+                body
+        );
+
         for (Variable v : vscope.getVariables()) {
-            recorded.append("\n" + v.getType().getStringType() + " " + v.getName() + " = (" + v.getType().getStringType() + ") kcontext.getVariable(\"" + v.getName() + "\"); \n");
+            body.addStatement(makeAssignment(v));
         }
-        
-        recorded.append(action + "})");
+
+        recorded.appendMethod("action", lambda);
+    }
+
+    private Statement makeAssignment(Variable v) {
+        ClassOrInterfaceType type =
+                new ClassOrInterfaceType(v.getType().getStringType());
+        String name = v.getName();
+
+        // `type` `name` = (`type`) `kcontext.getVariable
+        AssignExpr assignExpr = new AssignExpr(
+                new VariableDeclarationExpr(type, name),
+                new CastExpr(
+                        type,
+                        new MethodCallExpr(
+                                new NameExpr("kcontext"),
+                                "getVariable")
+                                .addArgument(name)),
+                AssignExpr.Operator.ASSIGN);
+
+        return new ExpressionStmt(assignExpr);
     }
 }
